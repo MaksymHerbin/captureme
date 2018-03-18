@@ -11,5 +11,10 @@ public class HelloWorldController {
         return "Hello World";
     }
 
+    @RequestMapping
+    public String goodByWorld() {
+        return "See ya";
+    }
+
 
 }
