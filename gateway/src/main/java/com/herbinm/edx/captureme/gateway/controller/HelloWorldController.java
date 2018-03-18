@@ -11,10 +11,4 @@ public class HelloWorldController {
         return "Hello World";
     }
 
-    @RequestMapping(value = "/by")
-    public String goodByWorld() {
-        return "See ya";
-    }
-
-
 }

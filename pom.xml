@@ -13,6 +13,7 @@
 
     <modules>
         <module>gateway</module>
+        <module>tmpservice</module>
     </modules>
 
 </project>
