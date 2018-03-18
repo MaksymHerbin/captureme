@@ -1,0 +1,18 @@
+// Create a custom Cloud9 runner - similar to the Sublime build system
+// For more information see http://docs.aws.amazon.com/console/cloud9/create-run-config
+{
+    "script": [
+        "filePath=$file_path",
+        "servicePath=${filePath%%/src*}",
+        "serviceName=${servicePath##*/}",
+        "echo Building runnable artifacts for $serviceName",
+        "cd $servicePath",
+        "mvn clean package -DskipTests",
+        "echo Staring service $serviceName",
+        "java -jar target/$serviceName-0.0.1-SNAPSHOT.jar"
+    ],
+    "working_dir": "$project_path/captureme",
+    "info" : "Running service defined in $file_name",
+    "env" : {},
+    "selector" : "source.java"
+}
