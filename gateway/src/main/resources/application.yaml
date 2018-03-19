@@ -1,2 +1,8 @@
 server:
   port: 8080
+
+aws:
+  s3:
+    photos:
+      bucket: edx-images-bucket
+      prefix: photos/
