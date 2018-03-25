@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ImageStorage {
 
-    void saveImage(MultipartFile multipartFile);
+    URL saveImage(MultipartFile multipartFile);
 
     List<URL> allImagesUrls();
 

@@ -45,7 +45,6 @@
 
     <!-- Main component for a primary marketing message or call to action -->
     <div class="jumbotron">
-        <p>
         <h4>Upload Photo</h4>
         <form method="POST" enctype="multipart/form-data" action="/">
             <div class="control-group">
@@ -60,7 +59,20 @@
                 </div>
             </div>
         </form>
-        </p>
+
+        <!-- Displayed last uploaded photo -->
+        <div th:if="${recentUpload}">
+            <hr/>
+            <h3>Uploaded!</h3>
+            <img th:src="${recentUpload}"/><br/>
+            <div th:unless="${#lists.isEmpty(all_labels)}">
+                <div th:each="label : ${all_labels}">
+                    <span class="label label-info" th:text="${label}"/>
+                </div>
+            </div>
+        </div>
+
+        <!-- Displays all photos-->
         <div th:unless="${#lists.isEmpty(photos)}">
             <hr/>
             <h4>Photos</h4>

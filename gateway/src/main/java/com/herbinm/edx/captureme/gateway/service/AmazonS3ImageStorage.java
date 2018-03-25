@@ -49,15 +49,18 @@ public class AmazonS3ImageStorage implements ImageStorage {
     }
 
     @Override
-    public void saveImage(MultipartFile multipartFile) {
+    public URL saveImage(MultipartFile multipartFile) {
         try {
+            String key = prefix + randomUUID().toString() + ".png";
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucketName)
-                    .key(prefix + randomUUID().toString() + ".png")
+                    .key(key)
                     .build();
             awsS3ClientV2.putObject(putObjectRequest, RequestBody.of(multipartFile.getBytes()));
+            return getPhotoUrl(key);
         } catch (Exception exception) {
             LOGGER.error("Exception while loading  {} to S3", multipartFile.getOriginalFilename(), exception);
+            return null;
         }
     }
 
