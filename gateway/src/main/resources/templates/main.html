@@ -61,25 +61,20 @@
         </form>
 
         <!-- Displayed last uploaded photo -->
-        <div th:if="${recentUpload}">
+        <th:block th:if="${recentUpload}">
             <hr/>
             <h3>Uploaded!</h3>
             <img th:src="${recentUpload}"/><br/>
-            <div th:unless="${#lists.isEmpty(all_labels)}">
-                <div th:each="label : ${all_labels}">
-                    <span class="label label-info" th:text="${label}"/>
-                </div>
-            </div>
-        </div>
+            <span class="label label-info" th:unless="${#lists.isEmpty(all_labels)}" th:each="label : ${all_labels}"
+                  th:text="${label}"/>
+        </th:block>
 
         <!-- Displays all photos-->
-        <div th:unless="${#lists.isEmpty(photos)}">
+        <th:block th:unless="${#lists.isEmpty(photos)}">
             <hr/>
             <h4>Photos</h4>
-            <div th:each="photo : ${photos}">
-                <img width="150" th:src="${photo}"/>
-            </div>
-        </div>
+            <img width="150" th:each="photo : ${photos}" th:src="${photo}"/>
+        </th:block>
     </div>
 
 </div> <!-- /container -->
