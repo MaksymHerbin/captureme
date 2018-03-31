@@ -1,4 +1,4 @@
-package com.herbinm.edx.captureme.gateway.service;
+package com.herbinm.edx.captureme.gateway.service.storage;
 
 import com.amazonaws.services.s3.AmazonS3;
 import org.slf4j.Logger;
@@ -49,7 +49,7 @@ public class AmazonS3ImageStorage implements ImageStorage {
     }
 
     @Override
-    public URL saveImage(MultipartFile multipartFile) {
+    public String saveImage(MultipartFile multipartFile) {
         try {
             String key = prefix + randomUUID().toString() + ".png";
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
@@ -57,11 +57,20 @@ public class AmazonS3ImageStorage implements ImageStorage {
                     .key(key)
                     .build();
             awsS3ClientV2.putObject(putObjectRequest, RequestBody.of(multipartFile.getBytes()));
-            return getPhotoUrl(key);
+            return key;
         } catch (Exception exception) {
             LOGGER.error("Exception while loading  {} to S3", multipartFile.getOriginalFilename(), exception);
             return null;
         }
+    }
+
+    @Override
+    public URL imageUrl(String imageKey) {
+        if (imageKey != null) {
+            return getPhotoUrl(imageKey);
+        }
+        LOGGER.debug("No image key provided for getting URL");
+        return null;
     }
 
     @Override

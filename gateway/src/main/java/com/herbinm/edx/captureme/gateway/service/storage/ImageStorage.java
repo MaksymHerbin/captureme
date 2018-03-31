@@ -1,4 +1,4 @@
-package com.herbinm.edx.captureme.gateway.service;
+package com.herbinm.edx.captureme.gateway.service.storage;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -7,7 +7,9 @@ import java.util.List;
 
 public interface ImageStorage {
 
-    URL saveImage(MultipartFile multipartFile);
+    String saveImage(MultipartFile multipartFile);
+
+    URL imageUrl(String imageKey);
 
     List<URL> allImagesUrls();
 

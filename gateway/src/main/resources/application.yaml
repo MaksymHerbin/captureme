@@ -6,3 +6,6 @@ aws:
     photos:
       bucket: edx-images-bucket
       prefix: photos/
+  recognition:
+    maximum_labels: 10
+    minimum_confidence: 80
