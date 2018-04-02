@@ -13,7 +13,6 @@
 
     <modules>
         <module>gateway</module>
-        <module>tmpservice</module>
         <module>database</module>
     </modules>
 
