@@ -62,11 +62,13 @@
         </form>
 
         <!-- Displayed last uploaded photo -->
-        <th:block th:if="${recentUpload}">
+        <th:block th:if="${recentUploaded}">
             <hr/>
             <h3>Uploaded!</h3>
-            <img th:src="${recentUpload}"/><br/>
-            <span class="label label-info" th:unless="${#lists.isEmpty(all_labels)}" th:each="label : ${all_labels}"
+            <img th:src="${recentUploaded.accessUrl}"/><br/>
+            <span class="label label-info"
+                  th:unless="${#lists.isEmpty(recentUploaded.labels)}"
+                  th:each="label : ${recentUploaded.labels}"
                   th:text="${label}"/>
         </th:block>
 

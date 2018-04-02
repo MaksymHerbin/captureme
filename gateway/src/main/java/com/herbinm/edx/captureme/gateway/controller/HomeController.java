@@ -1,6 +1,7 @@
 package com.herbinm.edx.captureme.gateway.controller;
 
-import com.herbinm.edx.captureme.gateway.service.storage.PhotoStorage;
+import com.herbinm.edx.captureme.gateway.facade.PhotosFacade;
+import com.herbinm.edx.captureme.gateway.facade.data.PhotoData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -13,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.inject.Inject;
-import java.net.URL;
 
 import static java.util.stream.Collectors.toList;
 
@@ -22,31 +22,30 @@ public class HomeController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HomeController.class);
 
-    private final PhotoStorage photoStorage;
+    private final PhotosFacade photosFacade;
 
     @Inject
-    public HomeController(PhotoStorage photoStorage) {
-        this.photoStorage = photoStorage;
+    public HomeController(PhotosFacade photosFacade) {
+        this.photosFacade = photosFacade;
     }
 
     @GetMapping("/")
-    public String home(Model model, @RequestParam(required = false) String justSavedImageKey) {
+    public String home(Model model, @RequestParam(required = false) String justSavedPhotoKey) {
         LOGGER.trace("Loading all photos");
-        if (justSavedImageKey != null) {
-            LOGGER.trace("A photo with key {} was just saved, obtaining public url and labels", justSavedImageKey);
-            model.addAttribute("recentUpload", photoStorage.imageUrl(justSavedImageKey));
-            model.addAttribute("all_labels", photoStorage.labels(justSavedImageKey));
+        if (justSavedPhotoKey != null) {
+            LOGGER.trace("A photo with key {} was just saved, obtaining public url and labels", justSavedPhotoKey);
+            model.addAttribute("recentUploaded", photosFacade.findPhotoByKey(justSavedPhotoKey));
         }
-        model.addAttribute("photos", photoStorage.allImagesUrls().stream().map(URL::toString).collect(toList()));
+        model.addAttribute("photos", photosFacade.findAllPhotos().stream().map(PhotoData::getAccessUrl).collect(toList()));
         return "main";
     }
 
     @PostMapping("/")
     public ModelAndView uploadPhoto(@RequestParam("photo") MultipartFile multipartFile, ModelMap model) {
         LOGGER.trace("Uploading photo {}, size {}", multipartFile.getOriginalFilename(), multipartFile.getSize());
-        String savedImageKey = photoStorage.uploadImage(multipartFile);
-        if (savedImageKey != null) {
-            model.put("justSavedImageKey", savedImageKey);
+        PhotoData uploadPhoto = photosFacade.uploadPhoto(multipartFile);
+        if (uploadPhoto != null) {
+            model.put("justSavedPhotoKey", uploadPhoto.getObjectKey());
         }
         return new ModelAndView("redirect:/", model);
     }

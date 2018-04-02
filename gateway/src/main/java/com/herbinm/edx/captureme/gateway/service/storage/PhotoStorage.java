@@ -9,8 +9,6 @@ public interface PhotoStorage {
 
     String uploadImage(MultipartFile multipartFile);
 
-    List<String> labels(String objectKey);
-
     URL imageUrl(String objectKey);
 
     List<URL> allImagesUrls();
