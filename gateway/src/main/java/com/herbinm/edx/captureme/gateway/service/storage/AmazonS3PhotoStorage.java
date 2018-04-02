@@ -1,6 +1,7 @@
 package com.herbinm.edx.captureme.gateway.service.storage;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.herbinm.edx.captureme.gateway.service.recognition.ImageRecognition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,6 +19,8 @@ import java.util.List;
 import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Lists.newArrayList;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
@@ -25,23 +28,28 @@ import static java.util.stream.Collectors.toSet;
 import static org.joda.time.DateTime.now;
 
 @Service
-public class AmazonS3ImageStorage implements ImageStorage {
+public class AmazonS3PhotoStorage implements PhotoStorage {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AmazonS3ImageStorage.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AmazonS3PhotoStorage.class);
 
     private final AmazonS3 awsS3ClientV1;
     private final S3Client awsS3ClientV2;
+
+    private final ImageRecognition imageRecognition;
 
     private final String bucketName;
     private final String prefix;
 
     @Inject
-    public AmazonS3ImageStorage(AmazonS3 awsS3ClientV1,
+    public AmazonS3PhotoStorage(AmazonS3 awsS3ClientV1,
                                 S3Client awsS3ClientV2,
+                                ImageRecognition imageRecognition,
                                 @Value("${aws.s3.photos.bucket}") String bucketName,
                                 @Value("${aws.s3.photos.prefix}") String prefix) {
         this.awsS3ClientV1 = awsS3ClientV1;
         this.awsS3ClientV2 = awsS3ClientV2;
+        this.imageRecognition = imageRecognition;
+
         this.bucketName = bucketName;
         this.prefix = prefix;
         checkNotNull(this.bucketName, "Bucket name for photos must be specified");
@@ -49,7 +57,7 @@ public class AmazonS3ImageStorage implements ImageStorage {
     }
 
     @Override
-    public String saveImage(MultipartFile multipartFile) {
+    public String uploadImage(MultipartFile multipartFile) {
         try {
             String key = prefix + randomUUID().toString() + ".png";
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
@@ -65,12 +73,20 @@ public class AmazonS3ImageStorage implements ImageStorage {
     }
 
     @Override
-    public URL imageUrl(String imageKey) {
-        if (imageKey != null) {
-            return getPhotoUrl(imageKey);
+    public URL imageUrl(String objectKey) {
+        if (objectKey != null) {
+            return getPhotoUrl(objectKey);
         }
         LOGGER.debug("No image key provided for getting URL");
         return null;
+    }
+
+    @Override
+    public List<String> labels(String objectKey) {
+        if (objectKey != null) {
+            return newArrayList(imageRecognition.labels(objectKey));
+        }
+        return emptyList();
     }
 
     @Override
