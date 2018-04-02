@@ -1,0 +1,3 @@
+#url=jdbc:mysql://<url_to_your_dev_database>/captureme
+#username=<master_user>
+#password=<master_user_password>
