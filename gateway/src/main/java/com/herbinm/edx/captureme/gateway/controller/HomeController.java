@@ -15,8 +15,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.inject.Inject;
 
-import static java.util.stream.Collectors.toList;
-
 @Controller
 public class HomeController {
 
@@ -36,7 +34,7 @@ public class HomeController {
             LOGGER.trace("A photo with key {} was just saved, obtaining public url and labels", justSavedPhotoKey);
             model.addAttribute("recentUploaded", photosFacade.findPhotoByKey(justSavedPhotoKey));
         }
-        model.addAttribute("photos", photosFacade.findAllPhotos().stream().map(PhotoData::getAccessUrl).collect(toList()));
+        model.addAttribute("photos", photosFacade.findAllPhotos());
         return "main";
     }
 

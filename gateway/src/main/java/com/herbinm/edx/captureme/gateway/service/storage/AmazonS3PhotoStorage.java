@@ -7,21 +7,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.sync.RequestBody;
 
 import javax.inject.Inject;
 import java.net.URL;
-import java.util.List;
-import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static java.util.Collections.emptySet;
 import static java.util.UUID.randomUUID;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
 import static org.joda.time.DateTime.now;
 
 @Service
@@ -74,11 +67,6 @@ public class AmazonS3PhotoStorage implements PhotoStorage {
         return null;
     }
 
-    @Override
-    public List<URL> allImagesUrls() {
-        return obtainPhotosKeys().stream().map(this::getPhotoUrl).collect(toList());
-    }
-
     private URL getPhotoUrl(String key) {
         try {
             return awsS3ClientV1.generatePresignedUrl(bucketName, key, now().plusHours(1).toDate());
@@ -88,16 +76,4 @@ public class AmazonS3PhotoStorage implements PhotoStorage {
         return null;
     }
 
-    private Set<String> obtainPhotosKeys() {
-        try {
-            ListObjectsRequest listObjectsRequest = ListObjectsRequest.builder()
-                    .bucket(bucketName)
-                    .prefix(prefix)
-                    .build();
-            return awsS3ClientV2.listObjects(listObjectsRequest).contents().stream().map(S3Object::key).collect(toSet());
-        } catch (Exception exception) {
-            LOGGER.error("Exception while getting list of images from to S3", exception);
-        }
-        return emptySet();
-    }
 }

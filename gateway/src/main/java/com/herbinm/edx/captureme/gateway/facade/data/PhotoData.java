@@ -1,6 +1,7 @@
 package com.herbinm.edx.captureme.gateway.facade.data;
 
 import java.net.URL;
+import java.util.Date;
 import java.util.List;
 
 public class PhotoData {
@@ -8,11 +9,13 @@ public class PhotoData {
     private final String objectKey;
     private final URL accessUrl;
     private final List<String> labels;
+    private final Date uploadedAt;
 
-    private PhotoData(String objectKey, URL accessUrl, List<String> labels) {
+    private PhotoData(String objectKey, URL accessUrl, List<String> labels, Date uploadedAt) {
         this.objectKey = objectKey;
         this.accessUrl = accessUrl;
         this.labels = labels;
+        this.uploadedAt = uploadedAt;
     }
 
     public String getObjectKey() {
@@ -27,6 +30,10 @@ public class PhotoData {
         return labels;
     }
 
+    public Date getUploadedAt() {
+        return uploadedAt;
+    }
+
     public static PhotoDataBuilder photoData() {
         return new PhotoDataBuilder();
     }
@@ -36,6 +43,7 @@ public class PhotoData {
         private String objectKey;
         private List<String> labels;
         private URL accessUrl;
+        private Date uploadedAt;
 
         private PhotoDataBuilder() {
         }
@@ -55,8 +63,13 @@ public class PhotoData {
             return this;
         }
 
+        public PhotoDataBuilder uploadedAt(Date uploadedAt) {
+            this.uploadedAt = uploadedAt;
+            return this;
+        }
+
         public PhotoData build() {
-            return new PhotoData(objectKey, accessUrl, labels);
+            return new PhotoData(objectKey, accessUrl, labels, uploadedAt);
         }
 
     }

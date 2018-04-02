@@ -76,7 +76,19 @@
         <th:block th:unless="${#lists.isEmpty(photos)}">
             <hr/>
             <h4>Photos</h4>
-            <img width="150" th:each="photo : ${photos}" th:src="${photo}"/>
+            <table class="table table-bordered" th:each="photo : ${photos}">
+                <tr>
+                    <td rowspan="4" class="col-md-2 text-center"><img width="150" th:src="${photo.accessUrl}"/></td>
+                </tr>
+                <tr>
+                    <th scope="row" class="col-md-2">Labels</th>
+                    <td th:text="${photo.labels}"/>
+                </tr>
+                <tr>
+                    <th scope="row" class="col-md-2">Created</th>
+                    <td th:text="${photo.uploadedAt}"/>
+                </tr>
+            </table>
         </th:block>
     </div>
 
