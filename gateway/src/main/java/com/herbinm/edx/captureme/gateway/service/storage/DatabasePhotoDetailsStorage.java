@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import javax.inject.Inject;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,7 +46,7 @@ public class DatabasePhotoDetailsStorage implements PhotoDetailsStorage {
     @Override
     public List<Photo> allPhotos() {
         return jdbcTemplate.query(
-                "SELECT object_key, labels, created_datetime FROM photo WHERE cognito_username is null",
+                "SELECT object_key, labels, created_datetime FROM photo WHERE cognito_username is null order by created_datetime DESC",
                 new PhotoRowMapper()
         );
     }
@@ -57,7 +58,7 @@ public class DatabasePhotoDetailsStorage implements PhotoDetailsStorage {
 
             return aPhoto(resultSet.getString("object_key"))
                     .labels(newArrayList(resultSet.getString("labels").split(",")))
-                    .uploadedAt(resultSet.getDate("created_datetime"))
+                    .uploadedAt(new Date(resultSet.getTimestamp("created_datetime").getTime()))
                     .build();
         }
     }
