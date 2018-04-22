@@ -13,7 +13,6 @@
 
     <modules>
         <module>gateway</module>
-        <module>database</module>
     </modules>
 
 </project>

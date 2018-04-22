@@ -4,7 +4,7 @@ function prop {
     grep "${1}" ${2}|cut -d'=' -f2
 }
 
-properties_file=src/main/resources/liquibase/environments/$1/connection.properties
+properties_file=environments/$1/connection.properties
 
 if [ -f ${properties_file} ]; then
    echo "Loading database connection properties from ${properties_file}"
@@ -28,8 +28,8 @@ if [ -f ${properties_file} ]; then
         exit 1
    fi
 
-   java -jar src/main/resources/liquibase/lib/liquibase.jar \
-        --defaultsFile src/main/resources/liquibase/liquibase.properties \
+   java -jar lib/liquibase.jar \
+        --defaultsFile liquibase.properties \
         --username ${username} \
         --password ${password} \
         --url ${url} \
