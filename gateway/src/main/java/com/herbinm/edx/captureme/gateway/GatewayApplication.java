@@ -1,6 +1,5 @@
 package com.herbinm.edx.captureme.gateway;
 
-import com.amazonaws.auth.EnvironmentVariableCredentialsProvider;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.rekognition.AmazonRekognition;
 import com.amazonaws.services.rekognition.AmazonRekognitionClientBuilder;
@@ -22,33 +21,18 @@ public class GatewayApplication {
     // This instance is needed because, new version of S3Client does not support some opperations
     // In case operation is present in new version of SDK, it should be used
     @Bean
-    public AmazonS3 awsS3ClientV1(EnvironmentVariableCredentialsProvider credentialsProvider) {
-        return AmazonS3Client.builder()
-                .withRegion("us-west-2")
-                .withCredentials(credentialsProvider)
-                .build();
+    public AmazonS3 awsS3ClientV1() {
+        return AmazonS3Client.builder().withRegion("us-west-2").build();
     }
 
     @Bean
     public S3Client awsS3ClientV2() {
-        return S3Client.builder()
-                .region(Region.US_WEST_2)
-                .credentialsProvider(new software.amazon.awssdk.auth.EnvironmentVariableCredentialsProvider())
-                .build();
+        return S3Client.builder().region(Region.US_WEST_2).build();
     }
 
     @Bean
-    public AmazonRekognition awsRecognitionClient(EnvironmentVariableCredentialsProvider credentialsProvider) {
-        return AmazonRekognitionClientBuilder
-                .standard()
-                .withRegion(Regions.US_WEST_2)
-                .withCredentials(credentialsProvider)
-                .build();
-    }
-
-    @Bean
-    public EnvironmentVariableCredentialsProvider credentialsProvider() {
-        return new EnvironmentVariableCredentialsProvider();
+    public AmazonRekognition awsRecognitionClient() {
+        return AmazonRekognitionClientBuilder.standard().withRegion(Regions.US_WEST_2).build();
     }
 
 }
