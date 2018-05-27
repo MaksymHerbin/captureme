@@ -1,5 +1,6 @@
 package com.herbinm.edx.captureme.gateway.controller;
 
+import com.herbinm.edx.captureme.gateway.domain.User;
 import com.herbinm.edx.captureme.gateway.facade.PhotosFacade;
 import com.herbinm.edx.captureme.gateway.facade.data.PhotoData;
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpSession;
 
 @Controller
 public class HomeController {
@@ -28,7 +30,13 @@ public class HomeController {
     }
 
     @GetMapping("/")
-    public String home(Model model, @RequestParam(required = false) String justSavedPhotoKey) {
+    public String home() {
+        return "main";
+    }
+
+    @GetMapping("/login")
+    public String login(HttpSession session) {
+        session.setAttribute("current_user", new User("Fake User"));
         return "main";
     }
     
