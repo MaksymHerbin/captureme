@@ -53,12 +53,51 @@
     
     <!-- Main component for a primary marketing message or call to action -->
     <div class="jumbotron">
-        <th:block th:if="${session.current_user}">
-            Click <em>my photos</em> to access your photos.
-        </th:block>
-        <th:block th:unless="${session.current_user}">
-            Click <em>login in / sign up<em> to access this site.
-        </th:block>    
+        
+            <h4>Upload Photo</h4>
+            <form method="POST" enctype="multipart/form-data" action="/myphotos">
+                <div class="control-group">
+                    <label class="control-label">Photo:</label>
+                    <input type="file" name="photo"/>
+                </div>
+    
+                &nbsp;
+                <div class="control-group">
+                    <div class="controls">
+                        <input class="btn btn-primary" type="submit" value="Upload"/>
+                    </div>
+                </div>
+            </form>
+    
+            <!-- Displayed last uploaded photo -->
+            <th:block th:if="${recentUploaded}">
+                <hr/>
+                <h3>Uploaded!</h3>
+                <img th:src="${recentUploaded.accessUrl}"/><br/>
+                <span class="label label-info"
+                      th:unless="${#lists.isEmpty(recentUploaded.labels)}"
+                      th:each="label : ${recentUploaded.labels}"
+                      th:text="${label}"/>
+            </th:block>
+    
+            <!-- Displays all photos-->
+            <th:block th:unless="${#lists.isEmpty(photos)}">
+                <hr/>
+                <h4>Photos</h4>
+                <table class="table table-bordered" th:each="photo : ${photos}">
+                    <tr>
+                        <td rowspan="4" class="col-md-2 text-center"><img width="150" th:src="${photo.accessUrl}"/></td>
+                    </tr>
+                    <tr>
+                        <th scope="row" class="col-md-2">Labels</th>
+                        <td th:text="${photo.labels}"/>
+                    </tr>
+                    <tr>
+                        <th scope="row" class="col-md-2">Created</th>
+                        <td th:text="${photo.uploadedAt}"/>
+                    </tr>
+                </table>
+            </th:block>
     </div>
 
 </div> <!-- /container -->

@@ -29,6 +29,11 @@ public class HomeController {
 
     @GetMapping("/")
     public String home(Model model, @RequestParam(required = false) String justSavedPhotoKey) {
+        return "main";
+    }
+    
+    @GetMapping("/myphotos")
+    public String myphotos(Model model, @RequestParam(required = false) String justSavedPhotoKey) {
         LOGGER.trace("Loading all photos");
         if (justSavedPhotoKey != null) {
             LOGGER.trace("A photo with key {} was just saved, obtaining public url and labels", justSavedPhotoKey);
@@ -38,14 +43,14 @@ public class HomeController {
         return "main";
     }
 
-    @PostMapping("/")
+    @PostMapping("/myphotos")
     public ModelAndView uploadPhoto(@RequestParam("photo") MultipartFile multipartFile, ModelMap model) {
         LOGGER.trace("Uploading photo {}, size {}", multipartFile.getOriginalFilename(), multipartFile.getSize());
         PhotoData uploadPhoto = photosFacade.uploadPhoto(multipartFile);
         if (uploadPhoto != null) {
             model.put("justSavedPhotoKey", uploadPhoto.getObjectKey());
         }
-        return new ModelAndView("redirect:/", model);
+        return new ModelAndView("redirect:/myphotos", model);
     }
 
 }
