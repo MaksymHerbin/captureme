@@ -47,24 +47,34 @@ public class HomeController {
     }
     
     @GetMapping("/myphotos")
-    public String myphotos(Model model, @RequestParam(required = false) String justSavedPhotoKey) {
-        LOGGER.trace("Loading all photos");
-        if (justSavedPhotoKey != null) {
-            LOGGER.trace("A photo with key {} was just saved, obtaining public url and labels", justSavedPhotoKey);
-            model.addAttribute("recentUploaded", photosFacade.findPhotoByKey(justSavedPhotoKey));
+    public String myphotos(Model model, HttpSession session, @RequestParam(required = false) String justSavedPhotoKey) {
+        User currentUser = (User) session.getAttribute("current_user");
+        if(currentUser != null){
+            LOGGER.trace("Loading all photos");
+            if (justSavedPhotoKey != null) {
+                LOGGER.trace("A photo with key {} was just saved, obtaining public url and labels", justSavedPhotoKey);
+                model.addAttribute("recentUploaded", photosFacade.findPhotoByKey(justSavedPhotoKey));
+            }
+            model.addAttribute("photos", photosFacade.findAllPhotos());
+            return "myphotos";
+        } else{
+            return "main";
         }
-        model.addAttribute("photos", photosFacade.findAllPhotos());
-        return "main";
     }
 
     @PostMapping("/myphotos")
-    public ModelAndView uploadPhoto(@RequestParam("photo") MultipartFile multipartFile, ModelMap model) {
-        LOGGER.trace("Uploading photo {}, size {}", multipartFile.getOriginalFilename(), multipartFile.getSize());
-        PhotoData uploadPhoto = photosFacade.uploadPhoto(multipartFile);
-        if (uploadPhoto != null) {
-            model.put("justSavedPhotoKey", uploadPhoto.getObjectKey());
+    public ModelAndView uploadPhoto(@RequestParam("photo") MultipartFile multipartFile, ModelMap model, HttpSession session) {
+        User currentUser = (User) session.getAttribute("current_user");
+        if(currentUser != null){
+            LOGGER.trace("Uploading photo {}, size {}", multipartFile.getOriginalFilename(), multipartFile.getSize());
+            PhotoData uploadPhoto = photosFacade.uploadPhoto(multipartFile);
+            if (uploadPhoto != null) {
+                model.put("justSavedPhotoKey", uploadPhoto.getObjectKey());
+            }
+            return new ModelAndView("redirect:/myphotos", model);
+        } else{
+            return new ModelAndView("redirect:/", model);
         }
-        return new ModelAndView("redirect:/myphotos", model);
     }
 
 }
