@@ -39,6 +39,12 @@ public class HomeController {
         session.setAttribute("current_user", new User("Fake User"));
         return "main";
     }
+
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.removeAttribute("current_user");
+        return "main";
+    }
     
     @GetMapping("/myphotos")
     public String myphotos(Model model, @RequestParam(required = false) String justSavedPhotoKey) {
