@@ -26,27 +26,29 @@ public class DatabasePhotoDetailsStorage implements PhotoDetailsStorage {
     }
 
     @Override
-    public void save(Photo photo) {
+    public void save(Photo photo, String userName) {
         jdbcTemplate.update(
-                "INSERT INTO photo(object_key, labels) VALUES (?, ?)",
+                "INSERT INTO photo(object_key, labels, cognito_username) VALUES (?, ?, ?)",
                 photo.getObjectKey(),
-                photo.getLabels().stream().collect(Collectors.joining(","))
+                photo.getLabels().stream().collect(Collectors.joining(",")),
+                userName
         );
     }
 
     @Override
     public Photo load(String objectKey) {
         return jdbcTemplate.queryForObject(
-                "SELECT object_key, labels, created_datetime FROM photo WHERE cognito_username is null and object_key = ?",
+                "SELECT object_key, labels, created_datetime FROM photo WHERE object_key = ?",
                 new String[]{objectKey},
                 new PhotoRowMapper()
         );
     }
 
     @Override
-    public List<Photo> allPhotos() {
+    public List<Photo> allPhotos(String userId) {
         return jdbcTemplate.query(
-                "SELECT object_key, labels, created_datetime FROM photo WHERE cognito_username is null order by created_datetime DESC",
+                "SELECT object_key, labels, created_datetime FROM photo WHERE cognito_username = ? order by created_datetime DESC",
+                new Object[]{userId},
                 new PhotoRowMapper()
         );
     }

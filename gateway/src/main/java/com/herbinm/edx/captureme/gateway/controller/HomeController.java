@@ -75,7 +75,7 @@ public class HomeController {
                 LOGGER.trace("A photo with key {} was just saved, obtaining public url and labels", justSavedPhotoKey);
                 model.addAttribute("recentUploaded", photosFacade.findPhotoByKey(justSavedPhotoKey));
             }
-            model.addAttribute("photos", photosFacade.findAllPhotos());
+            model.addAttribute("photos", photosFacade.findAllPhotos(currentUser));
             return "myphotos";
         } else{
             return "main";
@@ -87,7 +87,7 @@ public class HomeController {
         User currentUser = (User) session.getAttribute(CURRENT_USER_SESSION);
         if(currentUser != null){
             LOGGER.trace("Uploading photo {}, size {}", multipartFile.getOriginalFilename(), multipartFile.getSize());
-            PhotoData uploadPhoto = photosFacade.uploadPhoto(multipartFile);
+            PhotoData uploadPhoto = photosFacade.uploadPhoto(multipartFile, currentUser);
             if (uploadPhoto != null) {
                 model.put("justSavedPhotoKey", uploadPhoto.getObjectKey());
             }
