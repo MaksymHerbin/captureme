@@ -1,4 +1,4 @@
-package com.herbinm.edx.captureme.gateway.service.recognition;
+package com.herbinm.edx.captureme.gateway.photos.service.recognition;
 
 import java.util.List;
 

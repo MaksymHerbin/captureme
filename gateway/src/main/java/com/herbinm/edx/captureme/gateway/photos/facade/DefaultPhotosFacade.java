@@ -1,11 +1,11 @@
-package com.herbinm.edx.captureme.gateway.facade;
+package com.herbinm.edx.captureme.gateway.photos.facade;
 
-import com.herbinm.edx.captureme.gateway.domain.Photo;
 import com.herbinm.edx.captureme.gateway.domain.User;
-import com.herbinm.edx.captureme.gateway.facade.data.PhotoData;
-import com.herbinm.edx.captureme.gateway.service.recognition.ImageRecognition;
-import com.herbinm.edx.captureme.gateway.service.storage.PhotoDetailsStorage;
-import com.herbinm.edx.captureme.gateway.service.storage.PhotoStorage;
+import com.herbinm.edx.captureme.gateway.photos.domain.Photo;
+import com.herbinm.edx.captureme.gateway.photos.facade.data.PhotoData;
+import com.herbinm.edx.captureme.gateway.photos.service.recognition.ImageRecognition;
+import com.herbinm.edx.captureme.gateway.photos.service.storage.file.PhotoStorage;
+import com.herbinm.edx.captureme.gateway.photos.service.storage.info.PhotoDetailsStorage;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,8 +13,8 @@ import javax.inject.Inject;
 import java.net.URL;
 import java.util.List;
 
-import static com.herbinm.edx.captureme.gateway.domain.Photo.aPhoto;
-import static com.herbinm.edx.captureme.gateway.facade.data.PhotoData.photoData;
+import static com.herbinm.edx.captureme.gateway.photos.domain.Photo.aPhoto;
+import static com.herbinm.edx.captureme.gateway.photos.facade.data.PhotoData.photoData;
 import static java.util.stream.Collectors.toList;
 
 @Service
@@ -53,18 +53,6 @@ public class DefaultPhotosFacade implements PhotosFacade {
                             .build();
                 }
         ).collect(toList());
-    }
-
-    @Override
-    public PhotoData findPhotoByKey(String objectKey) {
-        Photo photo = photoDetailsStorage.load(objectKey);
-        URL accessUrl = photoStorage.imageUrl(objectKey);
-        return photoData()
-                .objectKey(photo.getObjectKey())
-                .labels(photo.getLabels())
-                .accessUrl(accessUrl)
-                .uploadedAt(photo.getUploadedAt())
-                .build();
     }
 
 }

@@ -1,7 +1,7 @@
-package com.herbinm.edx.captureme.gateway.security;
+package com.herbinm.edx.captureme.gateway.authentication.controller;
 
+import com.herbinm.edx.captureme.gateway.authentication.service.CognitoAuthentication;
 import com.herbinm.edx.captureme.gateway.domain.User;
-import com.herbinm.edx.captureme.gateway.service.authentification.CognitoAuthentication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -13,19 +13,19 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
 import java.util.UUID;
 
-import static com.herbinm.edx.captureme.gateway.security.SessionAttributes.CURRENT_USER_SESSION;
+import static com.herbinm.edx.captureme.gateway.GatewayApplication.SessionAttribute.CURRENT_USER;
 
 @Controller
 @RequestMapping("/auth")
-public class LogicController {
+public class LoginController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LogicController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoginController.class);
     private static final String CSRF_STATE_SESSION = "csrf_state";
 
     private final CognitoAuthentication cognitoAuthentication;
 
     @Inject
-    public LogicController(CognitoAuthentication cognitoAuthentication) {
+    public LoginController(CognitoAuthentication cognitoAuthentication) {
         this.cognitoAuthentication = cognitoAuthentication;
     }
 
@@ -43,15 +43,15 @@ public class LogicController {
         if (state.equals(session.getAttribute(CSRF_STATE_SESSION))) {
             LOGGER.info("Authenticating user using code: {}", code);
             User loggedInUser = cognitoAuthentication.authenticate(code);
-            session.setAttribute(CURRENT_USER_SESSION, loggedInUser);
+            session.setAttribute(CURRENT_USER, loggedInUser);
         }
         return "redirect:/myphotos";
     }
 
     @GetMapping("/logout")
     public String logout(HttpSession session) {
-        session.removeAttribute(CURRENT_USER_SESSION);
-        return "main";
+        session.removeAttribute(CURRENT_USER);
+        return "redirect:/";
     }
 
 

@@ -1,4 +1,4 @@
-package com.herbinm.edx.captureme.gateway.service.storage;
+package com.herbinm.edx.captureme.gateway.photos.service.storage.file;
 
 import org.springframework.web.multipart.MultipartFile;
 

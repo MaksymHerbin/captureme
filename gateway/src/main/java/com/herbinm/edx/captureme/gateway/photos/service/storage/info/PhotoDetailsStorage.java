@@ -1,6 +1,6 @@
-package com.herbinm.edx.captureme.gateway.service.storage;
+package com.herbinm.edx.captureme.gateway.photos.service.storage.info;
 
-import com.herbinm.edx.captureme.gateway.domain.Photo;
+import com.herbinm.edx.captureme.gateway.photos.domain.Photo;
 
 import java.util.List;
 

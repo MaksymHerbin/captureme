@@ -1,4 +1,4 @@
-package com.herbinm.edx.captureme.gateway.service.authentification;
+package com.herbinm.edx.captureme.gateway.authentication.service;
 
 public class CognitoClientProperties {
 

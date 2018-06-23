@@ -1,6 +1,6 @@
-package com.herbinm.edx.captureme.gateway.service.storage;
+package com.herbinm.edx.captureme.gateway.photos.service.storage.info;
 
-import com.herbinm.edx.captureme.gateway.domain.Photo;
+import com.herbinm.edx.captureme.gateway.photos.domain.Photo;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.herbinm.edx.captureme.gateway.domain.Photo.aPhoto;
+import static com.herbinm.edx.captureme.gateway.photos.domain.Photo.aPhoto;
 
 @Repository
 public class DatabasePhotoDetailsStorage implements PhotoDetailsStorage {

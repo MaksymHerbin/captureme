@@ -1,4 +1,4 @@
-package com.herbinm.edx.captureme.gateway.facade.data;
+package com.herbinm.edx.captureme.gateway.photos.facade.data;
 
 import java.net.URL;
 import java.util.Date;

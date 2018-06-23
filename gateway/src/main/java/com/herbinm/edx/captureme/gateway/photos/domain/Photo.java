@@ -1,4 +1,4 @@
-package com.herbinm.edx.captureme.gateway.domain;
+package com.herbinm.edx.captureme.gateway.photos.domain;
 
 import com.google.common.collect.ImmutableList;
 

@@ -20,44 +20,15 @@
 
 <div class="container">
 
-    <!-- Static navbar -->
-      <nav class="navbar navbar-default">
-        <div class="container-fluid">
-          <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-              <span class="sr-only">Toggle navigation</span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-            </button>
-              <a class="navbar-brand" href="#">Capture Me</a>
-          </div>
-          <div id="navbar" class="navbar-collapse collapse">
-            <ul class="nav navbar-nav">
-              <li><a href="/">home</a>
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
-              <th:block th:if="${session.current_user}">
-                   <li><p class="navbar-text" th:text="${'Hello, ' + session.current_user.nickname}"></p></li>
-                  <li><a href="/myphotos">my photos</a>
-                  <li><a href="/auth/logout">log out</a>
-              </th:block>
-              <th:block th:unless="${session.current_user}">
-                  <li><a href="/auth/login">log in / sign up</a>
-              </th:block>
-            </ul>
-          </div><!--/.nav-collapse -->
-        </div><!--/.container-fluid -->
-      </nav>
+    <div th:insert="header :: navbar"></div>
 
-    
     <!-- Main component for a primary marketing message or call to action -->
     <div class="jumbotron">
         <th:block th:if="${session.current_user}">
             Click <em>my photos</em> to access your photos.
         </th:block>
         <th:block th:unless="${session.current_user}">
-            Click <em>login in / sign up<em> to access this site.
+            Click <em>login in / sign up</em> to access this site.
         </th:block>    
     </div>
 

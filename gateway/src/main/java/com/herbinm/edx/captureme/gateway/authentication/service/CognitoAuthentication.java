@@ -1,4 +1,4 @@
-package com.herbinm.edx.captureme.gateway.service.authentification;
+package com.herbinm.edx.captureme.gateway.authentication.service;
 
 import com.herbinm.edx.captureme.gateway.domain.User;
 import com.nimbusds.jwt.JWTClaimsSet;

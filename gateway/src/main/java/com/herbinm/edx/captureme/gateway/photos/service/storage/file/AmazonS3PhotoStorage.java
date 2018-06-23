@@ -1,4 +1,4 @@
-package com.herbinm.edx.captureme.gateway.service.storage;
+package com.herbinm.edx.captureme.gateway.photos.service.storage.file;
 
 import com.amazonaws.services.s3.AmazonS3;
 import org.slf4j.Logger;
