@@ -7,12 +7,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
@@ -37,28 +35,20 @@ public class HomeController {
     }
 
     @GetMapping("/myphotos")
-    public String myphotos(Model model, HttpSession session, @RequestParam(required = false) String justSavedPhotoKey) {
+    public String myphotos(Model model, HttpSession session) {
         User currentUser = (User) session.getAttribute(CURRENT_USER_SESSION);
-        LOGGER.trace("Loading all photos");
-        if (justSavedPhotoKey != null) {
-            LOGGER.trace("A photo with key {} was just saved, obtaining public url and labels", justSavedPhotoKey);
-            model.addAttribute("recentUploaded", photosFacade.findPhotoByKey(justSavedPhotoKey));
-        }
+        LOGGER.trace("Loading all photos for user {}", currentUser.getNickname());
         model.addAttribute("photos", photosFacade.findAllPhotos(currentUser));
         return "myphotos";
 
     }
 
     @PostMapping("/myphotos")
-    public ModelAndView uploadPhoto(@RequestParam("photo") MultipartFile multipartFile, ModelMap model, HttpSession session) {
+    public String uploadPhoto(@RequestParam("photo") MultipartFile multipartFile, HttpSession session) {
         User currentUser = (User) session.getAttribute(CURRENT_USER_SESSION);
-
-        LOGGER.trace("Uploading photo {}, size {}", multipartFile.getOriginalFilename(), multipartFile.getSize());
+        LOGGER.trace("Uploading photo {}, size {} for user {}", multipartFile.getOriginalFilename(), multipartFile.getSize(), currentUser.getNickname());
         PhotoData uploadPhoto = photosFacade.uploadPhoto(multipartFile, currentUser);
-        if (uploadPhoto != null) {
-            model.put("justSavedPhotoKey", uploadPhoto.getObjectKey());
-        }
-        return new ModelAndView("redirect:/myphotos", model);
+        return "redirect:/myphotos";
 
     }
 
