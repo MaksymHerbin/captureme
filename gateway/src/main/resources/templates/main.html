@@ -40,10 +40,10 @@
               <th:block th:if="${session.current_user}">
                    <li><p class="navbar-text" th:text="${'Hello, ' + session.current_user.nickname}"></p></li>
                   <li><a href="/myphotos">my photos</a>
-                  <li><a href="/logout">log out</a>
+                  <li><a href="/auth/logout">log out</a>
               </th:block>
               <th:block th:unless="${session.current_user}">
-                 <li><a href="/login">log in / sign up</a>
+                  <li><a href="/auth/login">log in / sign up</a>
               </th:block>
             </ul>
           </div><!--/.nav-collapse -->

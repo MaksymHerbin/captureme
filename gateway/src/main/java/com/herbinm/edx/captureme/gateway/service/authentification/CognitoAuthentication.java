@@ -45,7 +45,7 @@ public class CognitoAuthentication {
 
     public String buildLoginUrl(String state) {
         return String.format(
-                "https://%s/login?response_type=code&client_id=%s&state=%s&redirect_uri=%s/callback"
+                "https://%s/login?response_type=code&client_id=%s&state=%s&redirect_uri=%s/auth/callback"
                 , cognitoClientProperties.getDomain(), cognitoClientProperties.getClientId(), state, appBaseUrl);
     }
 
@@ -56,7 +56,7 @@ public class CognitoAuthentication {
         requestParams.add("grant_type", "authorization_code");
         requestParams.add("client_id", cognitoClientProperties.getClientId());
         requestParams.add("code", code);
-        requestParams.add("redirect_uri", appBaseUrl + "/callback");
+        requestParams.add("redirect_uri", appBaseUrl + "/auth/callback");
 
         HttpEntity<Map> request = new HttpEntity<>(requestParams, createHeaders(
                 cognitoClientProperties.getClientId(),
