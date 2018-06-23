@@ -4,9 +4,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URL;
 
-public interface PhotoStorage {
+public interface PhotoFileStorage {
 
-    String uploadImage(MultipartFile multipartFile);
+    String uploadImage(MultipartFile multipartFile, String objectKey);
+
+    void delete(String objectKey);
 
     URL imageUrl(String objectKey);
 

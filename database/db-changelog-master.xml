@@ -6,5 +6,6 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
     <include file="changes/install_database.sql"/>
+    <include file="changes/add_s3_key_column.sql"/>
 
 </databaseChangeLog>

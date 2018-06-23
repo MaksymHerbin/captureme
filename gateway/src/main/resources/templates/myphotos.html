@@ -46,7 +46,12 @@
                 <h4>Photos</h4>
                 <table class="table table-bordered" th:each="photo : ${photos}">
                     <tr>
-                        <td rowspan="4" class="col-md-2 text-center"><img width="150" th:src="${photo.accessUrl}"/></td>
+                        <td rowspan="4" class="col-md-2 text-center">
+                            <img width="150" th:src="${photo.accessUrl}"/>
+                            <a th:href="@{'/myphotos/delete/' + ${photo.objectKey}}">
+                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> delete
+                            </a>
+                        </td>
                     </tr>
                     <tr>
                         <th scope="row" class="col-md-2">Labels</th>

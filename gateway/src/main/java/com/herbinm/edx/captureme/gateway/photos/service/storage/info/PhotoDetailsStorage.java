@@ -8,7 +8,9 @@ public interface PhotoDetailsStorage {
 
     void save(Photo photo, String userName);
 
-    Photo load(String objectKey);
+    void delete(String objectKey, String userId);
+
+    Photo loadPhoto(String photoId);
 
     List<Photo> allPhotos(String userId);
 

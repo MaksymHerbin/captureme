@@ -18,6 +18,7 @@ import static com.herbinm.edx.captureme.gateway.photos.domain.Photo.aPhoto;
 @Repository
 public class DatabasePhotoDetailsStorage implements PhotoDetailsStorage {
 
+    private static final String SELECT_BASE = "SELECT object_key, s3_object_key, labels, created_datetime, cognito_username FROM photo";
     private final JdbcTemplate jdbcTemplate;
 
     @Inject
@@ -28,28 +29,38 @@ public class DatabasePhotoDetailsStorage implements PhotoDetailsStorage {
     @Override
     public void save(Photo photo, String userName) {
         jdbcTemplate.update(
-                "INSERT INTO photo(object_key, labels, cognito_username) VALUES (?, ?, ?)",
+                "INSERT INTO photo(object_key, s3_object_key, labels, cognito_username) VALUES (?,?,?,?)",
                 photo.getObjectKey(),
+                photo.getS3ObjectKey(),
                 photo.getLabels().stream().collect(Collectors.joining(",")),
                 userName
         );
     }
 
     @Override
-    public Photo load(String objectKey) {
-        return jdbcTemplate.queryForObject(
-                "SELECT object_key, labels, created_datetime FROM photo WHERE object_key = ?",
-                new String[]{objectKey},
+    public List<Photo> allPhotos(String userId) {
+        return jdbcTemplate.query(
+                SELECT_BASE + " WHERE cognito_username = ? order by created_datetime DESC",
+                new Object[]{userId},
                 new PhotoRowMapper()
         );
     }
 
     @Override
-    public List<Photo> allPhotos(String userId) {
-        return jdbcTemplate.query(
-                "SELECT object_key, labels, created_datetime FROM photo WHERE cognito_username = ? order by created_datetime DESC",
-                new Object[]{userId},
+    public Photo loadPhoto(String photoId) {
+        return jdbcTemplate.queryForObject(
+                SELECT_BASE + " WHERE object_key = ?",
+                new Object[]{photoId},
                 new PhotoRowMapper()
+        );
+    }
+
+    @Override
+    public void delete(String objectKey, String userId) {
+        jdbcTemplate.update(
+                "DELETE FROM photo where object_key=? and  cognito_username = ?",
+                objectKey,
+                userId
         );
     }
 
@@ -58,9 +69,10 @@ public class DatabasePhotoDetailsStorage implements PhotoDetailsStorage {
         @Override
         public Photo mapRow(ResultSet resultSet, int i) throws SQLException {
 
-            return aPhoto(resultSet.getString("object_key"))
+            return aPhoto(resultSet.getString("object_key"), resultSet.getString("s3_object_key"))
                     .labels(newArrayList(resultSet.getString("labels").split(",")))
                     .uploadedAt(new Date(resultSet.getTimestamp("created_datetime").getTime()))
+                    .userId(resultSet.getString("cognito_username"))
                     .build();
         }
     }

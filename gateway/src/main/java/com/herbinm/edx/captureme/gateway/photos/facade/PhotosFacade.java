@@ -12,4 +12,6 @@ public interface PhotosFacade {
 
     List<PhotoData> findAllPhotos(User user);
 
+    void delete(String photoId, User user);
+
 }

@@ -4,7 +4,7 @@ import com.herbinm.edx.captureme.gateway.domain.User;
 import com.herbinm.edx.captureme.gateway.photos.domain.Photo;
 import com.herbinm.edx.captureme.gateway.photos.facade.data.PhotoData;
 import com.herbinm.edx.captureme.gateway.photos.service.recognition.ImageRecognition;
-import com.herbinm.edx.captureme.gateway.photos.service.storage.file.PhotoStorage;
+import com.herbinm.edx.captureme.gateway.photos.service.storage.file.PhotoFileStorage;
 import com.herbinm.edx.captureme.gateway.photos.service.storage.info.PhotoDetailsStorage;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,27 +15,29 @@ import java.util.List;
 
 import static com.herbinm.edx.captureme.gateway.photos.domain.Photo.aPhoto;
 import static com.herbinm.edx.captureme.gateway.photos.facade.data.PhotoData.photoData;
+import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 
 @Service
 public class DefaultPhotosFacade implements PhotosFacade {
 
-    private final PhotoStorage photoStorage;
+    private final PhotoFileStorage photoFileStorage;
     private final PhotoDetailsStorage photoDetailsStorage;
     private final ImageRecognition imageRecognition;
 
     @Inject
-    public DefaultPhotosFacade(PhotoStorage photoStorage, PhotoDetailsStorage photoDetailsStorage, ImageRecognition imageRecognition) {
-        this.photoStorage = photoStorage;
+    public DefaultPhotosFacade(PhotoFileStorage photoFileStorage, PhotoDetailsStorage photoDetailsStorage, ImageRecognition imageRecognition) {
+        this.photoFileStorage = photoFileStorage;
         this.photoDetailsStorage = photoDetailsStorage;
         this.imageRecognition = imageRecognition;
     }
 
     @Override
     public PhotoData uploadPhoto(MultipartFile photoFile, User user) {
-        String objectKey = photoStorage.uploadImage(photoFile);
-        List<String> labels = imageRecognition.labels(objectKey);
-        photoDetailsStorage.save(aPhoto(objectKey).labels(labels).build(), user.getUniqueId());
+        String objectKey = randomUUID().toString();
+        String s3ObjectKey = photoFileStorage.uploadImage(photoFile, objectKey);
+        List<String> labels = imageRecognition.labels(s3ObjectKey);
+        photoDetailsStorage.save(aPhoto(objectKey, s3ObjectKey).labels(labels).build(), user.getUniqueId());
         return photoData().objectKey(objectKey).labels(labels).build();
     }
 
@@ -44,7 +46,7 @@ public class DefaultPhotosFacade implements PhotosFacade {
         List<Photo> allPhotos = photoDetailsStorage.allPhotos(user.getUniqueId());
         return allPhotos.stream().map(
                 photo -> {
-                    URL accessUrl = photoStorage.imageUrl(photo.getObjectKey());
+                    URL accessUrl = photoFileStorage.imageUrl(photo.getS3ObjectKey());
                     return photoData()
                             .objectKey(photo.getObjectKey())
                             .labels(photo.getLabels())
@@ -53,6 +55,15 @@ public class DefaultPhotosFacade implements PhotosFacade {
                             .build();
                 }
         ).collect(toList());
+    }
+
+    @Override
+    public void delete(String photoId, User user) {
+        Photo toDelete = photoDetailsStorage.loadPhoto(photoId);
+        if (toDelete.getUserId().equals(user.getUniqueId())) {
+            photoFileStorage.delete(toDelete.getS3ObjectKey());
+            photoDetailsStorage.delete(photoId, user.getUniqueId());
+        }
     }
 
 }
