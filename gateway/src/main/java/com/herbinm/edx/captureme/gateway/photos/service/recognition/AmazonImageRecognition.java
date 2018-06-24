@@ -2,6 +2,7 @@ package com.herbinm.edx.captureme.gateway.photos.service.recognition;
 
 import com.amazonaws.services.rekognition.AmazonRekognition;
 import com.amazonaws.services.rekognition.model.*;
+import com.amazonaws.xray.spring.aop.XRayEnabled;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +15,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.stream.Collectors.toList;
 
 @Service
+@XRayEnabled
 public class AmazonImageRecognition implements ImageRecognition {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AmazonImageRecognition.class);

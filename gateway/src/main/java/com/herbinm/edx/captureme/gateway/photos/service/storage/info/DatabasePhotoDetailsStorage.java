@@ -1,5 +1,6 @@
 package com.herbinm.edx.captureme.gateway.photos.service.storage.info;
 
+import com.amazonaws.xray.spring.aop.XRayEnabled;
 import com.herbinm.edx.captureme.gateway.photos.domain.Photo;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -16,6 +17,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.herbinm.edx.captureme.gateway.photos.domain.Photo.aPhoto;
 
 @Repository
+@XRayEnabled
 public class DatabasePhotoDetailsStorage implements PhotoDetailsStorage {
 
     private static final String SELECT_BASE = "SELECT object_key, s3_object_key, labels, created_datetime, cognito_username FROM cm_photo";

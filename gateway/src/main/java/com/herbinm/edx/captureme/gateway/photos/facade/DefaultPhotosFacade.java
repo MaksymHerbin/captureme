@@ -1,5 +1,6 @@
 package com.herbinm.edx.captureme.gateway.photos.facade;
 
+import com.amazonaws.xray.spring.aop.XRayEnabled;
 import com.herbinm.edx.captureme.gateway.domain.User;
 import com.herbinm.edx.captureme.gateway.photos.domain.Photo;
 import com.herbinm.edx.captureme.gateway.photos.facade.data.PhotoData;
@@ -19,6 +20,7 @@ import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 
 @Service
+@XRayEnabled
 public class DefaultPhotosFacade implements PhotosFacade {
 
     private final PhotoFileStorage photoFileStorage;
