@@ -1,5 +1,6 @@
 package com.herbinm.edx.captureme.gateway.photos.facade;
 
+import com.amazonaws.xray.AWSXRay;
 import com.amazonaws.xray.spring.aop.XRayEnabled;
 import com.herbinm.edx.captureme.gateway.domain.User;
 import com.herbinm.edx.captureme.gateway.photos.domain.Photo;
@@ -45,18 +46,20 @@ public class DefaultPhotosFacade implements PhotosFacade {
 
     @Override
     public List<PhotoData> findAllPhotos(User user) {
-        List<Photo> allPhotos = photoDetailsStorage.allPhotos(user.getUniqueId());
-        return allPhotos.stream().map(
-                photo -> {
-                    URL accessUrl = photoFileStorage.imageUrl(photo.getS3ObjectKey());
-                    return photoData()
-                            .objectKey(photo.getObjectKey())
-                            .labels(photo.getLabels())
-                            .accessUrl(accessUrl)
-                            .uploadedAt(photo.getUploadedAt())
-                            .build();
-                }
-        ).collect(toList());
+        return AWSXRay.createSubsegment("loadUsersPhotos", (subsegment) -> {
+            List<Photo> allPhotos = photoDetailsStorage.allPhotos(user.getUniqueId());
+            return allPhotos.stream().map(
+                    photo -> {
+                        URL accessUrl = photoFileStorage.imageUrl(photo.getS3ObjectKey());
+                        return photoData()
+                                .objectKey(photo.getObjectKey())
+                                .labels(photo.getLabels())
+                                .accessUrl(accessUrl)
+                                .uploadedAt(photo.getUploadedAt())
+                                .build();
+                    }
+            ).collect(toList());
+        });
     }
 
     @Override
