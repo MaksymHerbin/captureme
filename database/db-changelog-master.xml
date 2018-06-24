@@ -7,5 +7,6 @@
 
     <include file="changes/install_database.sql"/>
     <include file="changes/add_s3_key_column.sql"/>
+    <include file="changes/create_new_photos_table.sql"/>
 
 </databaseChangeLog>

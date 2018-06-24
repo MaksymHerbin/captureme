@@ -18,7 +18,7 @@ import static com.herbinm.edx.captureme.gateway.photos.domain.Photo.aPhoto;
 @Repository
 public class DatabasePhotoDetailsStorage implements PhotoDetailsStorage {
 
-    private static final String SELECT_BASE = "SELECT object_key, s3_object_key, labels, created_datetime, cognito_username FROM photo";
+    private static final String SELECT_BASE = "SELECT object_key, s3_object_key, labels, created_datetime, cognito_username FROM cm_photo";
     private final JdbcTemplate jdbcTemplate;
 
     @Inject
@@ -29,7 +29,7 @@ public class DatabasePhotoDetailsStorage implements PhotoDetailsStorage {
     @Override
     public void save(Photo photo, String userName) {
         jdbcTemplate.update(
-                "INSERT INTO photo(object_key, s3_object_key, labels, cognito_username) VALUES (?,?,?,?)",
+                "INSERT INTO cm_photo(object_key, s3_object_key, labels, cognito_username) VALUES (?,?,?,?)",
                 photo.getObjectKey(),
                 photo.getS3ObjectKey(),
                 photo.getLabels().stream().collect(Collectors.joining(",")),
@@ -58,7 +58,7 @@ public class DatabasePhotoDetailsStorage implements PhotoDetailsStorage {
     @Override
     public void delete(String objectKey, String userId) {
         jdbcTemplate.update(
-                "DELETE FROM photo where object_key=? and  cognito_username = ?",
+                "DELETE FROM cm_photo where object_key=? and  cognito_username = ?",
                 objectKey,
                 userId
         );
