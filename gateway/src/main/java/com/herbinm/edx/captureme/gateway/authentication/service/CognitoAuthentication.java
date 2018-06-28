@@ -1,5 +1,6 @@
 package com.herbinm.edx.captureme.gateway.authentication.service;
 
+import com.amazonaws.xray.spring.aop.XRayEnabled;
 import com.herbinm.edx.captureme.gateway.domain.User;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.proc.JWTProcessor;
@@ -24,6 +25,7 @@ import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 
 @Service
+@XRayEnabled
 public class CognitoAuthentication {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CognitoAuthentication.class);

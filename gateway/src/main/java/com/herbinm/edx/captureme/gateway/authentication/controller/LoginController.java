@@ -1,5 +1,6 @@
 package com.herbinm.edx.captureme.gateway.authentication.controller;
 
+import com.amazonaws.xray.spring.aop.XRayEnabled;
 import com.herbinm.edx.captureme.gateway.authentication.service.CognitoAuthentication;
 import com.herbinm.edx.captureme.gateway.domain.User;
 import org.slf4j.Logger;
@@ -17,6 +18,7 @@ import static com.herbinm.edx.captureme.gateway.GatewayApplication.SessionAttrib
 
 @Controller
 @RequestMapping("/auth")
+@XRayEnabled
 public class LoginController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LoginController.class);
