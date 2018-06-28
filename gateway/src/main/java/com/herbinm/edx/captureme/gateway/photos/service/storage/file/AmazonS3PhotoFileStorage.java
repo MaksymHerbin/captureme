@@ -1,7 +1,6 @@
 package com.herbinm.edx.captureme.gateway.photos.service.storage.file;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.xray.spring.aop.XRayEnabled;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +18,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.joda.time.DateTime.now;
 
 @Service
-@XRayEnabled
 public class AmazonS3PhotoFileStorage implements PhotoFileStorage {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AmazonS3PhotoFileStorage.class);
