@@ -4,6 +4,6 @@ import java.util.List;
 
 public interface ImageRecognition {
 
-    List<String> labels(String imageKey);
+    List<String> getPhotoLabels(String imageKey);
 
 }

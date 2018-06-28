@@ -40,7 +40,7 @@ public class AmazonImageRecognition implements ImageRecognition {
     }
 
     @Override
-    public List<String> labels(String imageKey) {
+    public List<String> getPhotoLabels(String imageKey) {
         LOGGER.trace("Searching for labels for image in S3 with key {}", imageKey);
         S3Object s3Image = new S3Object().withName(imageKey).withBucket(bucketName);
         Image image = new Image().withS3Object(s3Image);

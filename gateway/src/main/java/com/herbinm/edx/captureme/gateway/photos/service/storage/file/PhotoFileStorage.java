@@ -6,10 +6,10 @@ import java.net.URL;
 
 public interface PhotoFileStorage {
 
-    String uploadImage(MultipartFile multipartFile, String objectKey);
+    String uploadPhotoFile(MultipartFile multipartFile, String objectKey);
 
-    void delete(String objectKey);
+    void deletePhotoFile(String objectKey);
 
-    URL imageUrl(String objectKey);
+    URL getPhotoFileUrl(String objectKey);
 
 }

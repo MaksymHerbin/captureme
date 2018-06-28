@@ -29,7 +29,7 @@ public class DatabasePhotoDetailsStorage implements PhotoDetailsStorage {
     }
 
     @Override
-    public void save(Photo photo, String userName) {
+    public void savePhotoDetails(Photo photo, String userName) {
         jdbcTemplate.update(
                 "INSERT INTO cm_photo(object_key, s3_object_key, labels, cognito_username) VALUES (?,?,?,?)",
                 photo.getObjectKey(),
@@ -40,7 +40,7 @@ public class DatabasePhotoDetailsStorage implements PhotoDetailsStorage {
     }
 
     @Override
-    public List<Photo> allPhotos(String userId) {
+    public List<Photo> getAllPhotosForUser(String userId) {
         return jdbcTemplate.query(
                 SELECT_BASE + " WHERE cognito_username = ? order by created_datetime DESC",
                 new Object[]{userId},
@@ -49,7 +49,7 @@ public class DatabasePhotoDetailsStorage implements PhotoDetailsStorage {
     }
 
     @Override
-    public Photo loadPhoto(String photoId) {
+    public Photo loadPhotoDetails(String photoId) {
         return jdbcTemplate.queryForObject(
                 SELECT_BASE + " WHERE object_key = ?",
                 new Object[]{photoId},
@@ -58,7 +58,7 @@ public class DatabasePhotoDetailsStorage implements PhotoDetailsStorage {
     }
 
     @Override
-    public void delete(String objectKey, String userId) {
+    public void deletePhotoDetails(String objectKey, String userId) {
         jdbcTemplate.update(
                 "DELETE FROM cm_photo where object_key=? and  cognito_username = ?",
                 objectKey,

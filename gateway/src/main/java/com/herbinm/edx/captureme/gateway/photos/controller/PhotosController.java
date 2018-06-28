@@ -39,7 +39,7 @@ public class PhotosController {
     @GetMapping("/delete/{photo_id}")
     public String delete(@PathVariable("photo_id") String photoId, @SessionAttribute(CURRENT_USER) User currentUser) {
         LOGGER.trace("Deleting photo with id {} for user {}", photoId, currentUser);
-        photosFacade.delete(photoId, currentUser);
+        photosFacade.deletePhoto(photoId, currentUser);
         return "redirect:/myphotos";
     }
 

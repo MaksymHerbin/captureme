@@ -45,7 +45,7 @@ public class AmazonS3PhotoFileStorage implements PhotoFileStorage {
     }
 
     @Override
-    public String uploadImage(MultipartFile multipartFile, String objectKey) {
+    public String uploadPhotoFile(MultipartFile multipartFile, String objectKey) {
         try {
             String s3ObjectKey = prefix + objectKey + ".png";
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
@@ -61,7 +61,7 @@ public class AmazonS3PhotoFileStorage implements PhotoFileStorage {
     }
 
     @Override
-    public void delete(String s3ObjectKey) {
+    public void deletePhotoFile(String s3ObjectKey) {
         DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
                 .bucket(bucketName)
                 .key(s3ObjectKey)
@@ -70,7 +70,7 @@ public class AmazonS3PhotoFileStorage implements PhotoFileStorage {
     }
 
     @Override
-    public URL imageUrl(String s3ObjectKey) {
+    public URL getPhotoFileUrl(String s3ObjectKey) {
         if (s3ObjectKey != null) {
             return getPhotoUrl(s3ObjectKey);
         }

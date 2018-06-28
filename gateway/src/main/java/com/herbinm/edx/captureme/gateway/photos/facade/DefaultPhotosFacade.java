@@ -37,18 +37,18 @@ public class DefaultPhotosFacade implements PhotosFacade {
     @Override
     public PhotoData uploadPhoto(MultipartFile photoFile, User user) {
         String objectKey = randomUUID().toString();
-        String s3ObjectKey = photoFileStorage.uploadImage(photoFile, objectKey);
-        List<String> labels = imageRecognition.labels(s3ObjectKey);
-        photoDetailsStorage.save(aPhoto(objectKey, s3ObjectKey).labels(labels).build(), user.getUniqueId());
+        String s3ObjectKey = photoFileStorage.uploadPhotoFile(photoFile, objectKey);
+        List<String> labels = imageRecognition.getPhotoLabels(s3ObjectKey);
+        photoDetailsStorage.savePhotoDetails(aPhoto(objectKey, s3ObjectKey).labels(labels).build(), user.getUniqueId());
         return photoData().objectKey(objectKey).labels(labels).build();
     }
 
     @Override
     public List<PhotoData> findAllPhotos(User user) {
-        List<Photo> allPhotos = photoDetailsStorage.allPhotos(user.getUniqueId());
+        List<Photo> allPhotos = photoDetailsStorage.getAllPhotosForUser(user.getUniqueId());
         return allPhotos.stream().map(
                 photo -> {
-                    URL accessUrl = photoFileStorage.imageUrl(photo.getS3ObjectKey());
+                    URL accessUrl = photoFileStorage.getPhotoFileUrl(photo.getS3ObjectKey());
                     return photoData()
                             .objectKey(photo.getObjectKey())
                             .labels(photo.getLabels())
@@ -60,11 +60,11 @@ public class DefaultPhotosFacade implements PhotosFacade {
     }
 
     @Override
-    public void delete(String photoId, User user) {
-        Photo toDelete = photoDetailsStorage.loadPhoto(photoId);
+    public void deletePhoto(String photoId, User user) {
+        Photo toDelete = photoDetailsStorage.loadPhotoDetails(photoId);
         if (toDelete.getUserId().equals(user.getUniqueId())) {
-            photoFileStorage.delete(toDelete.getS3ObjectKey());
-            photoDetailsStorage.delete(photoId, user.getUniqueId());
+            photoFileStorage.deletePhotoFile(toDelete.getS3ObjectKey());
+            photoDetailsStorage.deletePhotoDetails(photoId, user.getUniqueId());
         }
     }
 

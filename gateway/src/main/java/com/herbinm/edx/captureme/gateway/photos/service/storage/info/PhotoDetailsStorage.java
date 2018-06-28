@@ -6,12 +6,12 @@ import java.util.List;
 
 public interface PhotoDetailsStorage {
 
-    void save(Photo photo, String userName);
+    void savePhotoDetails(Photo photo, String userName);
 
-    void delete(String objectKey, String userId);
+    void deletePhotoDetails(String objectKey, String userId);
 
-    Photo loadPhoto(String photoId);
+    Photo loadPhotoDetails(String photoId);
 
-    List<Photo> allPhotos(String userId);
+    List<Photo> getAllPhotosForUser(String userId);
 
 }
