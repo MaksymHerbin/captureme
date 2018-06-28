@@ -1,5 +1,6 @@
 package com.herbinm.edx.captureme.gateway.photos.controller;
 
+import com.amazonaws.xray.spring.aop.XRayEnabled;
 import com.herbinm.edx.captureme.gateway.domain.User;
 import com.herbinm.edx.captureme.gateway.photos.facade.PhotosFacade;
 import com.herbinm.edx.captureme.gateway.photos.facade.data.PhotoData;
@@ -16,6 +17,7 @@ import static com.herbinm.edx.captureme.gateway.GatewayApplication.SessionAttrib
 
 @Controller
 @RequestMapping("/myphotos")
+@XRayEnabled
 public class PhotosController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PhotosController.class);

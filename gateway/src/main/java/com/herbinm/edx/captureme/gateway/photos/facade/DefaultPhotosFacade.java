@@ -1,5 +1,6 @@
 package com.herbinm.edx.captureme.gateway.photos.facade;
 
+import com.amazonaws.xray.spring.aop.XRayEnabled;
 import com.herbinm.edx.captureme.gateway.domain.User;
 import com.herbinm.edx.captureme.gateway.photos.domain.Photo;
 import com.herbinm.edx.captureme.gateway.photos.facade.data.PhotoData;
@@ -13,13 +14,13 @@ import javax.inject.Inject;
 import java.net.URL;
 import java.util.List;
 
-import static com.amazonaws.xray.AWSXRay.createSubsegment;
 import static com.herbinm.edx.captureme.gateway.photos.domain.Photo.aPhoto;
 import static com.herbinm.edx.captureme.gateway.photos.facade.data.PhotoData.photoData;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 
 @Service
+@XRayEnabled
 public class DefaultPhotosFacade implements PhotosFacade {
 
     private final PhotoFileStorage photoFileStorage;
@@ -36,28 +37,18 @@ public class DefaultPhotosFacade implements PhotosFacade {
     @Override
     public PhotoData uploadPhoto(MultipartFile photoFile, User user) {
         String objectKey = randomUUID().toString();
-        String s3ObjectKey = createSubsegment("uploadFileToS3", (segment) -> {
-            return photoFileStorage.uploadImage(photoFile, objectKey);
-        });
-        List<String> labels = createSubsegment("getImageLabels", (segment) -> {
-            return imageRecognition.labels(s3ObjectKey);
-        });
-        createSubsegment("storePhotoDetails", (segment) -> {
-            photoDetailsStorage.save(aPhoto(objectKey, s3ObjectKey).labels(labels).build(), user.getUniqueId());
-        });
+        String s3ObjectKey = photoFileStorage.uploadImage(photoFile, objectKey);
+        List<String> labels = imageRecognition.labels(s3ObjectKey);
+        photoDetailsStorage.save(aPhoto(objectKey, s3ObjectKey).labels(labels).build(), user.getUniqueId());
         return photoData().objectKey(objectKey).labels(labels).build();
     }
 
     @Override
     public List<PhotoData> findAllPhotos(User user) {
-        List<Photo> allPhotos = createSubsegment("loadUsersPhotosFromDB", (subsegment) -> {
-            return photoDetailsStorage.allPhotos(user.getUniqueId());
-        });
+        List<Photo> allPhotos = photoDetailsStorage.allPhotos(user.getUniqueId());
         return allPhotos.stream().map(
                 photo -> {
-                    URL accessUrl = createSubsegment("getPhotoUrlFromS3", (segment) -> {
-                        return photoFileStorage.imageUrl(photo.getS3ObjectKey());
-                    });
+                    URL accessUrl = photoFileStorage.imageUrl(photo.getS3ObjectKey());
                     return photoData()
                             .objectKey(photo.getObjectKey())
                             .labels(photo.getLabels())
