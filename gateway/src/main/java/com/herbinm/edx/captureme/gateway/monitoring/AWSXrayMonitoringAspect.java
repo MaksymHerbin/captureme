@@ -1,7 +1,9 @@
 package com.herbinm.edx.captureme.gateway.monitoring;
 
+import com.amazonaws.xray.AWSXRay;
 import com.amazonaws.xray.entities.Subsegment;
 import com.amazonaws.xray.spring.aop.AbstractXRayInterceptor;
+import com.amazonaws.xray.spring.aop.XRayInterceptorUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
@@ -22,4 +24,19 @@ public class AWSXrayMonitoringAspect extends AbstractXRayInterceptor {
     public void xrayEnabledClasses() {
     }
 
+    @Override
+    protected Object processXRayTrace(ProceedingJoinPoint pjp) throws Throwable {
+        try {
+            String className = pjp.getSignature().getDeclaringTypeName();
+            String methodName = pjp.getSignature().getName();
+            Subsegment subsegment = AWSXRay.beginSubsegment(className + "." + methodName);
+            subsegment.setMetadata(generateMetadata(pjp, subsegment));
+            return XRayInterceptorUtils.conditionalProceed(pjp);
+        } catch (Exception e) {
+            AWSXRay.getCurrentSegment().addException(e);
+            throw e;
+        } finally {
+            AWSXRay.endSubsegment();
+        }
+    }
 }
