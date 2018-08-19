@@ -11,8 +11,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.inject.Inject;
 import java.net.URL;
-import java.util.List;
 import java.util.Collections;
+import java.util.List;
 
 import static com.herbinm.edx.captureme.gateway.photos.domain.Photo.aPhoto;
 import static com.herbinm.edx.captureme.gateway.photos.facade.data.PhotoData.photoData;
@@ -48,7 +48,9 @@ public class DefaultPhotosFacade implements PhotosFacade {
                     URL accessUrl = photoFileStorage.getPhotoFileUrl(photo.getS3ObjectKey());
                     return photoData()
                             .objectKey(photo.getObjectKey())
-                            .labels(photo.getLabels().isEmpty() ? Collections.singletonList("Labels will be awailable soon......") : photo.getLabels())
+                            .labels(photo.getLabels().stream()
+                                    .filter(el -> !el.equals(""))
+                                    .collect(toList()).isEmpty() ? Collections.singletonList("Labels will be available soon......") : photo.getLabels())
                             .accessUrl(accessUrl)
                             .uploadedAt(photo.getUploadedAt())
                             .build();
