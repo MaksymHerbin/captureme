@@ -46,7 +46,7 @@ public class PhotosController {
     @PostMapping
     public String uploadPhoto(@RequestParam("photo") MultipartFile multipartFile, @SessionAttribute(CURRENT_USER) User currentUser) {
         LOGGER.trace("Uploading photo {}, size {} for user {}", multipartFile.getOriginalFilename(), multipartFile.getSize(), currentUser.getNickname());
-        PhotoData uploadPhoto = photosFacade.uploadPhoto(multipartFile, currentUser);
+        photosFacade.uploadPhoto(multipartFile, currentUser);
         return "redirect:/myphotos";
 
     }

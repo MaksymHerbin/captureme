@@ -4,7 +4,6 @@ import com.amazonaws.xray.spring.aop.XRayEnabled;
 import com.herbinm.edx.captureme.gateway.domain.User;
 import com.herbinm.edx.captureme.gateway.photos.domain.Photo;
 import com.herbinm.edx.captureme.gateway.photos.facade.data.PhotoData;
-import com.herbinm.edx.captureme.gateway.photos.service.recognition.ImageRecognition;
 import com.herbinm.edx.captureme.gateway.photos.service.storage.file.PhotoFileStorage;
 import com.herbinm.edx.captureme.gateway.photos.service.storage.info.PhotoDetailsStorage;
 import org.springframework.stereotype.Service;
@@ -13,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.inject.Inject;
 import java.net.URL;
 import java.util.List;
+import java.util.Collections;
 
 import static com.herbinm.edx.captureme.gateway.photos.domain.Photo.aPhoto;
 import static com.herbinm.edx.captureme.gateway.photos.facade.data.PhotoData.photoData;
@@ -25,22 +25,19 @@ public class DefaultPhotosFacade implements PhotosFacade {
 
     private final PhotoFileStorage photoFileStorage;
     private final PhotoDetailsStorage photoDetailsStorage;
-    private final ImageRecognition imageRecognition;
 
     @Inject
-    public DefaultPhotosFacade(PhotoFileStorage photoFileStorage, PhotoDetailsStorage photoDetailsStorage, ImageRecognition imageRecognition) {
+    public DefaultPhotosFacade(PhotoFileStorage photoFileStorage, PhotoDetailsStorage photoDetailsStorage) {
         this.photoFileStorage = photoFileStorage;
         this.photoDetailsStorage = photoDetailsStorage;
-        this.imageRecognition = imageRecognition;
     }
 
     @Override
     public PhotoData uploadPhoto(MultipartFile photoFile, User user) {
         String objectKey = randomUUID().toString();
         String s3ObjectKey = photoFileStorage.uploadPhotoFile(photoFile, objectKey);
-        List<String> labels = imageRecognition.getPhotoLabels(s3ObjectKey);
-        photoDetailsStorage.savePhotoDetails(aPhoto(objectKey, s3ObjectKey).labels(labels).build(), user.getUniqueId());
-        return photoData().objectKey(objectKey).labels(labels).build();
+        photoDetailsStorage.savePhotoDetails(aPhoto(objectKey, s3ObjectKey).build(), user.getUniqueId());
+        return photoData().objectKey(objectKey).build();
     }
 
     @Override
@@ -51,7 +48,7 @@ public class DefaultPhotosFacade implements PhotosFacade {
                     URL accessUrl = photoFileStorage.getPhotoFileUrl(photo.getS3ObjectKey());
                     return photoData()
                             .objectKey(photo.getObjectKey())
-                            .labels(photo.getLabels())
+                            .labels(photo.getLabels().isEmpty() ? Collections.singletonList("Labels will be awailable soon......") : photo.getLabels())
                             .accessUrl(accessUrl)
                             .uploadedAt(photo.getUploadedAt())
                             .build();
