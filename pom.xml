@@ -13,6 +13,7 @@
 
     <modules>
         <module>gateway</module>
+        <module>photos-upload-event-listener</module>
     </modules>
 
 </project>
